@@ -1,0 +1,318 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ronda</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Outfit:wght@400;500;700&display=swap">
+<style>
+/* Layout: one-screen phone app; a single big tappable card is the hero of every game screen */
+:root{
+  --bg:#1c1433; --bg2:#2a1f4a; --fg:#fbf4ff; --muted:#b9a9d8;
+  --truth:#5cc8ff; --dare:#ff8a3d; --never:#4fe0a8; --likely:#ff6fb5; --imp:#ff4d5e; --gold:#ffd166;
+  --ink:#1c1433;
+  --display:"Bowlby One","Arial Black",Impact,sans-serif;
+  --body:"Outfit",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;
+  background-image:radial-gradient(circle at 15% 0%,#3a2470 0,transparent 45%),radial-gradient(circle at 100% 100%,#40183f 0,transparent 40%);
+  background-attachment:fixed}
+.app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:18px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 28px;box-sizing:border-box}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(3rem,16vw,4.6rem);line-height:.9;margin:0;letter-spacing:.01em}
+h1 span{color:var(--gold)}
+h2{font-family:var(--display);font-weight:400;font-size:1.6rem;margin:0;text-wrap:balance}
+.tag{color:var(--muted);margin:6px 0 0;font-size:1rem}
+.label{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.langs{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--bg2);background:transparent;color:var(--fg);border-radius:999px;padding:8px 14px;font:700 .9rem var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mode{border:0;border-radius:22px;padding:18px 14px 16px;text-align:left;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;gap:6px;min-height:118px;
+  transform:rotate(var(--r,0deg));transition:transform .15s}
+.mode:hover,.mode:focus-visible{transform:rotate(0) scale(1.03)}
+.mode b{font-family:var(--display);font-weight:400;font-size:1.15rem;line-height:1.05}
+.mode small{font-size:.85rem;font-weight:500;opacity:.8}
+.m-td{background:linear-gradient(135deg,var(--truth),var(--dare));--r:-1.5deg}
+.m-nv{background:var(--never);--r:1.2deg}
+.m-lk{background:var(--likely);--r:1deg}
+.m-im{background:var(--imp);--r:-1deg;color:var(--fg)}
+.box{background:var(--bg2);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.row{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;background:var(--bg);border:2px solid #4a3a74;color:var(--fg);border-radius:14px;padding:12px;font:500 1rem var(--body)}
+input[type=text]:focus{outline:2px solid var(--gold);outline-offset:1px}
+.btn{border:0;border-radius:14px;padding:12px 16px;font:700 1rem var(--body);cursor:pointer;background:var(--fg);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--fg);border:2px solid #4a3a74}
+.btn.gold{background:var(--gold)}
+.btn.big{width:100%;padding:16px;font-size:1.1rem}
+.btn:focus-visible,.chip:focus-visible,.mode:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.players{display:flex;flex-wrap:wrap;gap:8px}
+.pl{background:var(--bg);border-radius:999px;padding:6px 8px 6px 14px;display:flex;align-items:center;gap:6px;font-weight:500}
+.pl button{background:#4a3a74;border:0;color:var(--fg);width:24px;height:24px;border-radius:50%;cursor:pointer;font-weight:700}
+.lock{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.lock p{margin:0;font-size:.9rem;color:var(--muted)}
+.pill{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--gold);color:var(--ink);white-space:nowrap}
+.pill.off{background:#4a3a74;color:var(--fg)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.turn{font-size:1.05rem;color:var(--muted)}
+.turn b{color:var(--fg)}
+.card{flex:1;min-height:320px;border-radius:28px;padding:28px 24px;display:flex;flex-direction:column;justify-content:space-between;color:var(--ink);
+  box-shadow:0 18px 40px -18px #000;animation:pop .28s ease-out}
+.card .kind{font-family:var(--display);font-size:1rem;letter-spacing:.06em;text-transform:uppercase}
+.card .txt{font-size:clamp(1.45rem,6.4vw,1.9rem);font-weight:700;line-height:1.25;text-wrap:balance}
+.card .foot{font-size:.85rem;font-weight:500;opacity:.75;font-variant-numeric:tabular-nums}
+.c-truth{background:var(--truth)} .c-dare{background:var(--dare)} .c-never{background:var(--never)} .c-likely{background:var(--likely)}
+.c-spicy{background:linear-gradient(160deg,var(--imp),var(--likely));color:var(--fg)}
+.c-imp{background:var(--imp);color:var(--fg)} .c-word{background:var(--fg)} .c-hide{background:var(--bg2);color:var(--fg);cursor:pointer}
+.choice{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice .btn{padding:22px 10px;font-family:var(--display);font-weight:400;font-size:1.2rem;border-radius:20px}
+.b-truth{background:var(--truth)} .b-dare{background:var(--dare)}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.msg{font-size:.9rem;min-height:1.2em;margin:0}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+textarea{width:100%;box-sizing:border-box;min-height:110px;background:var(--bg);border:2px solid #4a3a74;color:var(--fg);border-radius:14px;padding:12px;font:500 1rem var(--body);resize:vertical}
+textarea:focus{outline:2px solid var(--gold);outline-offset:1px}
+.clist{display:flex;flex-direction:column;gap:6px;max-height:46vh;overflow:auto}
+.ci{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:.95rem;line-height:1.35}
+.ci span{min-width:0;overflow-wrap:anywhere}
+.ci.base{opacity:.6}
+.ci button{flex:none;background:#4a3a74;border:0;color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:700}
+.chip .n{opacity:.65;font-weight:500;margin-left:4px;font-variant-numeric:tabular-nums}
+.mode:disabled{opacity:.35;cursor:not-allowed}
+details summary{cursor:pointer;color:var(--muted);font-weight:500}
+/* TV: wider canvas, huge type, remote-friendly focus */
+.tv .app{max-width:1100px;gap:24px}
+.tv .card{min-height:56vh;padding:48px}
+.tv .card .txt{font-size:clamp(2.2rem,4.6vw,4.2rem)}
+.tv .card .kind{font-size:1.4rem}
+.tv .btn.big,.tv .choice .btn{font-size:1.6rem;padding:22px}
+.tv .modes{grid-template-columns:repeat(4,1fr)}
+.tv .btn:focus,.tv .chip:focus,.tv .mode:focus,.tv .card:focus{outline:5px solid var(--gold);outline-offset:4px}
+@keyframes pop{from{transform:scale(.94) rotate(-2deg);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.card{animation:none}.mode{transform:none}}
+</style>
+
+<div class="app" id="app"></div>
+
+<script>
+const T={
+es:{tv:"Modo TV",imTv:"Solo en el móvil",panel:"Panel de cartas",tag:"Juegos para la fiesta. Un móvil, todo el grupo.",lang:"Idioma",modes:"Elige juego",
+ td:"Verdad o Reto",tdS:"El clásico de siempre",nv:"Yo nunca",nvS:"Bebe o confiesa",lk:"¿Quién es más probable?",lkS:"Todos señalan a la vez",im:"El Impostor",imS:"Uno no sabe la palabra",
+ players:"Jugadores",add:"Añadir",ph:"Nombre",min:"Añade al menos 3 jugadores",start:"Empezar",back:"Atrás",next:"Siguiente",
+ truth:"Verdad",dare:"Reto",turn:"Turno de",spicy:"Pack Picante 18+",spicyS:"+12 verdades y retos atrevidos",unlocked:"Activado",locked:"Bloqueado",
+ code:"Código de desbloqueo",unlock:"Activar",bad:"Código no válido",ok:"¡Pack activado!",nvHint:"Quien lo haya hecho, bebe o lo cuenta.",lkHint:"A la de tres, todos señalan a alguien.",
+ pass:"Pasa el móvil a",tap:"Toca para ver tu palabra",yourWord:"Tu palabra",youImp:"Eres el impostor",impHint:"Disimula. Escucha a los demás e intenta adivinar la palabra.",
+ hide:"Ocultar y pasar",discuss:"¡A debatir!",starts:"Empieza",discussHint:"Cada uno dice una palabra relacionada. Luego votad quién es el impostor.",reveal:"Revelar impostor",impWas:"El impostor era",wordWas:"La palabra era",again:"Otra ronda",card:"Carta",demo:"Demo: prueba el código RONDA26"},
+de:{tv:"TV-Modus",imTv:"Nur auf dem Handy",panel:"Karten-Panel",tag:"Partyspiele. Ein Handy, die ganze Runde.",lang:"Sprache",modes:"Spiel wählen",
+ td:"Wahrheit oder Pflicht",tdS:"Der Klassiker",nv:"Ich hab noch nie",nvS:"Trinken oder beichten",lk:"Wer würde eher?",lkS:"Alle zeigen gleichzeitig",im:"Der Impostor",imS:"Einer kennt das Wort nicht",
+ players:"Spieler",add:"Hinzufügen",ph:"Name",min:"Mindestens 3 Spieler hinzufügen",start:"Los geht's",back:"Zurück",next:"Weiter",
+ truth:"Wahrheit",dare:"Pflicht",turn:"Dran ist",spicy:"Spicy-Pack 18+",spicyS:"+12 freche Wahrheiten und Pflichten",unlocked:"Aktiv",locked:"Gesperrt",
+ code:"Freischalt-Code",unlock:"Aktivieren",bad:"Ungültiger Code",ok:"Pack aktiviert!",nvHint:"Wer es schon getan hat, trinkt oder erzählt.",lkHint:"Auf drei zeigen alle auf jemanden.",
+ pass:"Gib das Handy an",tap:"Tippen, um dein Wort zu sehen",yourWord:"Dein Wort",youImp:"Du bist der Impostor",impHint:"Lass dir nichts anmerken. Hör zu und errate das Wort.",
+ hide:"Verdecken und weitergeben",discuss:"Diskutiert!",starts:"Es beginnt",discussHint:"Jeder sagt ein passendes Wort. Dann stimmt ab, wer der Impostor ist.",reveal:"Impostor aufdecken",impWas:"Der Impostor war",wordWas:"Das Wort war",again:"Neue Runde",card:"Karte",demo:"Demo: Code RONDA26 ausprobieren"},
+it:{tv:"Modalità TV",imTv:"Solo sul telefono",panel:"Pannello carte",tag:"Giochi per la festa. Un telefono, tutto il gruppo.",lang:"Lingua",modes:"Scegli il gioco",
+ td:"Obbligo o Verità",tdS:"Il classico",nv:"Non ho mai",nvS:"Bevi o confessa",lk:"Chi è più probabile?",lkS:"Tutti indicano insieme",im:"L'Impostore",imS:"Uno non sa la parola",
+ players:"Giocatori",add:"Aggiungi",ph:"Nome",min:"Aggiungi almeno 3 giocatori",start:"Inizia",back:"Indietro",next:"Avanti",
+ truth:"Verità",dare:"Obbligo",turn:"Tocca a",spicy:"Pack Piccante 18+",spicyS:"+12 verità e obblighi audaci",unlocked:"Attivo",locked:"Bloccato",
+ code:"Codice di sblocco",unlock:"Attiva",bad:"Codice non valido",ok:"Pack attivato!",nvHint:"Chi l'ha fatto beve o racconta.",lkHint:"Al tre, tutti indicano qualcuno.",
+ pass:"Passa il telefono a",tap:"Tocca per vedere la tua parola",yourWord:"La tua parola",youImp:"Sei l'impostore",impHint:"Fai finta di niente. Ascolta e prova a indovinare la parola.",
+ hide:"Nascondi e passa",discuss:"Discutete!",starts:"Comincia",discussHint:"Ognuno dice una parola collegata. Poi votate chi è l'impostore.",reveal:"Svela l'impostore",impWas:"L'impostore era",wordWas:"La parola era",again:"Nuovo round",card:"Carta",demo:"Demo: prova il codice RONDA26"},
+en:{tv:"TV mode",imTv:"Phone only",panel:"Card panel",tag:"Party games. One phone, the whole crew.",lang:"Language",modes:"Pick a game",
+ td:"Truth or Dare",tdS:"The classic",nv:"Never Have I Ever",nvS:"Drink or confess",lk:"Who's Most Likely?",lkS:"Everyone points at once",im:"The Impostor",imS:"One player doesn't know the word",
+ players:"Players",add:"Add",ph:"Name",min:"Add at least 3 players",start:"Start",back:"Back",next:"Next",
+ truth:"Truth",dare:"Dare",turn:"Your turn,",spicy:"Spicy Pack 18+",spicyS:"+12 bold truths and dares",unlocked:"Active",locked:"Locked",
+ code:"Unlock code",unlock:"Activate",bad:"Invalid code",ok:"Pack unlocked!",nvHint:"If you've done it, drink or tell the story.",lkHint:"On three, everyone points at someone.",
+ pass:"Pass the phone to",tap:"Tap to see your word",yourWord:"Your word",youImp:"You're the impostor",impHint:"Play it cool. Listen and try to guess the word.",
+ hide:"Hide and pass",discuss:"Discuss!",starts:"Starting player",discussHint:"Everyone says one related word. Then vote for the impostor.",reveal:"Reveal impostor",impWas:"The impostor was",wordWas:"The word was",again:"New round",card:"Card",demo:"Demo: try code RONDA26"}
+};
+const D={
+es:{truth:["¿Cuál es la mentira más grande que has dicho a tus padres?","¿Qué es lo más vergonzoso que has buscado en Google?","¿A quién de este grupo llamarías a las 3 de la mañana?","¿Cuál fue tu peor cita?","¿Qué app borrarías si tu pareja revisara tu móvil?","¿Cuál es tu mayor miedo?","¿Qué es lo más raro que has comido?","¿Has fingido estar enfermo para no ir al trabajo?","¿Cuál es tu canción vergonzosa favorita?","¿Qué cosa nunca le contarías a tu jefe?","¿Qué le copiarías a alguien de este grupo?","¿Cuál es el último mensaje que borraste antes de enviarlo?"],
+ dare:["Imita a alguien del grupo hasta que adivinen quién es.","Enseña la última foto de tu galería.","Habla con acento durante las próximas 3 rondas.","Haz 15 sentadillas mientras cantas.","Deja que el grupo escriba tu próximo estado de WhatsApp.","Baila 30 segundos sin música.","Llama a alguien y cántale «Cumpleaños feliz».","Dile un piropo a cada persona del grupo.","Habla sin usar la letra «e» durante un minuto.","Deja que alguien te despeine como quiera.","Cuenta un chiste. Si nadie se ríe, haz otro reto.","Haz tu mejor imitación de un presentador de noticias."],
+ never:["Yo nunca he dormido más de 12 horas seguidas.","Yo nunca he stalkeado a un ex en redes.","Yo nunca he enviado un mensaje al grupo equivocado.","Yo nunca he mentido sobre mi edad.","Yo nunca he llorado con una película de dibujos.","Yo nunca he perdido un vuelo o un tren.","Yo nunca he cantado en la ducha a todo volumen.","Yo nunca he fingido que me gusta un regalo.","Yo nunca he olvidado un nombre justo después de oírlo.","Yo nunca he comido algo que se cayó al suelo.","Yo nunca he hablado solo por la calle.","Yo nunca he reenviado una captura que no debía."],
+ likely:["¿Quién es más probable que llegue tarde a su propia boda?","¿Quién es más probable que se haga famoso en TikTok?","¿Quién es más probable que sobreviva a un apocalipsis zombi?","¿Quién es más probable que se gaste el sueldo en una noche?","¿Quién es más probable que se duerma primero en la fiesta?","¿Quién es más probable que se mude a otro país por amor?","¿Quién es más probable que gane la lotería y lo pierda todo?","¿Quién es más probable que mande un audio de 5 minutos?","¿Quién es más probable que se pierda con el GPS encendido?","¿Quién es más probable que adopte cinco gatos?","¿Quién es más probable que se ría en un momento serio?","¿Quién es más probable que se haga millonario?"],
+ sTruth:["¿Quién del grupo te parece más atractivo/a?","¿Cuál fue tu beso más raro?","¿Has tenido un crush con alguien de este grupo?","¿Qué es lo más atrevido que has hecho en una cita?","Describe tu tipo ideal con 3 palabras.","¿Le has escrito a un ex estando borracho/a?"],
+ sDare:["Envía un 🔥 a la última persona con la que chateaste.","Deja que el grupo lea tu último chat durante 10 segundos.","Susúrrale un cumplido a la persona de tu derecha.","Pon tu mejor mirada seductora durante 10 segundos.","Baila lento con un cojín durante 20 segundos.","Deja que alguien elija tu foto de perfil por 24 horas."],
+ words:["Playa","Pizza","Hospital","Aeropuerto","Discoteca","Gimnasio","Cine","Supermercado","Fútbol","Boda","Avión","Montaña","Escuela","Cumpleaños","Piscina","Biblioteca","Restaurante","Zoo","Navidad","Concierto"]},
+de:{truth:["Was ist die grösste Lüge, die du deinen Eltern erzählt hast?","Was ist das Peinlichste, das du je gegoogelt hast?","Wen aus dieser Runde würdest du um 3 Uhr nachts anrufen?","Was war dein schlimmstes Date?","Welche App würdest du löschen, wenn dein Partner dein Handy checkt?","Was ist deine grösste Angst?","Was ist das Seltsamste, das du je gegessen hast?","Hast du schon mal krank gespielt, um nicht zur Arbeit zu gehen?","Was ist dein peinlicher Lieblingssong?","Was würdest du deinem Chef nie erzählen?","Was würdest du dir von jemandem hier abschauen?","Welche Nachricht hast du zuletzt vor dem Senden gelöscht?"],
+ dare:["Imitiere jemanden aus der Runde, bis alle erraten, wer es ist.","Zeig das letzte Foto in deiner Galerie.","Sprich die nächsten 3 Runden mit Akzent.","Mach 15 Kniebeugen und sing dabei.","Lass die Gruppe deinen nächsten WhatsApp-Status schreiben.","Tanze 30 Sekunden ohne Musik.","Ruf jemanden an und sing «Happy Birthday».","Mach jeder Person hier ein Kompliment.","Sprich eine Minute lang ohne den Buchstaben «e».","Lass jemanden deine Frisur zerzausen.","Erzähl einen Witz. Lacht keiner, gibt's eine neue Pflicht.","Mach deine beste Nachrichtensprecher-Imitation."],
+ never:["Ich hab noch nie mehr als 12 Stunden am Stück geschlafen.","Ich hab noch nie einen Ex auf Social Media gestalkt.","Ich hab noch nie eine Nachricht in den falschen Gruppenchat geschickt.","Ich hab noch nie über mein Alter gelogen.","Ich hab noch nie bei einem Zeichentrickfilm geweint.","Ich hab noch nie einen Flug oder Zug verpasst.","Ich hab noch nie laut unter der Dusche gesungen.","Ich hab noch nie so getan, als ob mir ein Geschenk gefällt.","Ich hab noch nie einen Namen direkt nach dem Hören vergessen.","Ich hab noch nie etwas vom Boden gegessen.","Ich hab noch nie auf der Strasse mit mir selbst geredet.","Ich hab noch nie einen Screenshot weitergeleitet, den ich nicht hätte sollen."],
+ likely:["Wer würde eher zu spät zur eigenen Hochzeit kommen?","Wer würde eher auf TikTok berühmt werden?","Wer würde eher eine Zombie-Apokalypse überleben?","Wer würde eher den ganzen Lohn an einem Abend ausgeben?","Wer würde eher als Erstes an der Party einschlafen?","Wer würde eher für die Liebe auswandern?","Wer würde eher im Lotto gewinnen und alles verlieren?","Wer würde eher eine 5-Minuten-Sprachnachricht schicken?","Wer würde sich eher mit eingeschaltetem GPS verlaufen?","Wer würde eher fünf Katzen adoptieren?","Wer würde eher im ernstesten Moment lachen?","Wer würde eher Millionär werden?"],
+ sTruth:["Wen aus der Runde findest du am attraktivsten?","Was war dein seltsamster Kuss?","Warst du schon mal in jemanden aus dieser Runde verknallt?","Was war das Frechste, das du je bei einem Date gemacht hast?","Beschreib deinen Traumtyp in 3 Worten.","Hast du schon mal betrunken deinem Ex geschrieben?"],
+ sDare:["Schick ein 🔥 an die letzte Person, mit der du gechattet hast.","Lass die Gruppe 10 Sekunden lang deinen letzten Chat lesen.","Flüstere der Person rechts von dir ein Kompliment ins Ohr.","Setz 10 Sekunden lang deinen verführerischsten Blick auf.","Tanz 20 Sekunden lang einen Slow mit einem Kissen.","Lass jemanden dein Profilbild für 24 Stunden auswählen."],
+ words:["Strand","Pizza","Spital","Flughafen","Club","Fitnessstudio","Kino","Supermarkt","Fussball","Hochzeit","Flugzeug","Berg","Schule","Geburtstag","Schwimmbad","Bibliothek","Restaurant","Zoo","Weihnachten","Konzert"]},
+it:{truth:["Qual è la bugia più grande che hai detto ai tuoi genitori?","Qual è la cosa più imbarazzante che hai cercato su Google?","Chi di questo gruppo chiameresti alle 3 di notte?","Qual è stato il tuo peggior appuntamento?","Quale app cancelleresti se il tuo partner controllasse il telefono?","Qual è la tua paura più grande?","Qual è la cosa più strana che hai mangiato?","Hai mai finto di stare male per non andare al lavoro?","Qual è la tua canzone imbarazzante preferita?","Cosa non racconteresti mai al tuo capo?","Cosa copieresti a qualcuno di questo gruppo?","Qual è l'ultimo messaggio che hai cancellato prima di inviarlo?"],
+ dare:["Imita qualcuno del gruppo finché indovinano chi è.","Mostra l'ultima foto della tua galleria.","Parla con un accento per i prossimi 3 turni.","Fai 15 squat cantando.","Lascia che il gruppo scriva il tuo prossimo stato WhatsApp.","Balla 30 secondi senza musica.","Chiama qualcuno e cantagli «Tanti auguri».","Fai un complimento a ogni persona del gruppo.","Parla per un minuto senza usare la lettera «e».","Lascia che qualcuno ti spettini come vuole.","Racconta una barzelletta. Se nessuno ride, fai un altro obbligo.","Fai la tua migliore imitazione di un giornalista del TG."],
+ never:["Non ho mai dormito più di 12 ore di fila.","Non ho mai stalkerato un ex sui social.","Non ho mai mandato un messaggio nel gruppo sbagliato.","Non ho mai mentito sulla mia età.","Non ho mai pianto guardando un cartone animato.","Non ho mai perso un volo o un treno.","Non ho mai cantato a squarciagola sotto la doccia.","Non ho mai finto che un regalo mi piacesse.","Non ho mai dimenticato un nome subito dopo averlo sentito.","Non ho mai mangiato qualcosa caduto per terra.","Non ho mai parlato da solo per strada.","Non ho mai inoltrato uno screenshot che non dovevo."],
+ likely:["Chi è più probabile che arrivi in ritardo al proprio matrimonio?","Chi è più probabile che diventi famoso su TikTok?","Chi è più probabile che sopravviva a un'apocalisse zombie?","Chi è più probabile che spenda lo stipendio in una sera?","Chi è più probabile che si addormenti per primo alla festa?","Chi è più probabile che si trasferisca all'estero per amore?","Chi è più probabile che vinca alla lotteria e perda tutto?","Chi è più probabile che mandi un vocale di 5 minuti?","Chi è più probabile che si perda con il GPS acceso?","Chi è più probabile che adotti cinque gatti?","Chi è più probabile che rida in un momento serio?","Chi è più probabile che diventi milionario?"],
+ sTruth:["Chi del gruppo trovi più attraente?","Qual è stato il tuo bacio più strano?","Hai mai avuto una cotta per qualcuno di questo gruppo?","Qual è la cosa più audace che hai fatto a un appuntamento?","Descrivi il tuo tipo ideale in 3 parole.","Hai mai scritto a un ex da ubriaco/a?"],
+ sDare:["Manda un 🔥 all'ultima persona con cui hai chattato.","Lascia che il gruppo legga la tua ultima chat per 10 secondi.","Sussurra un complimento alla persona alla tua destra.","Fai il tuo sguardo più seducente per 10 secondi.","Balla un lento con un cuscino per 20 secondi.","Lascia che qualcuno scelga la tua foto profilo per 24 ore."],
+ words:["Spiaggia","Pizza","Ospedale","Aeroporto","Discoteca","Palestra","Cinema","Supermercato","Calcio","Matrimonio","Aereo","Montagna","Scuola","Compleanno","Piscina","Biblioteca","Ristorante","Zoo","Natale","Concerto"]},
+en:{truth:["What's the biggest lie you've told your parents?","What's the most embarrassing thing you've googled?","Who here would you call at 3 a.m.?","What was your worst date?","Which app would you delete if your partner checked your phone?","What's your biggest fear?","What's the weirdest thing you've ever eaten?","Have you ever faked being sick to skip work?","What's your favorite embarrassing song?","What would you never tell your boss?","What would you steal from someone in this group?","What's the last message you deleted before sending?"],
+ dare:["Impersonate someone here until the group guesses who.","Show the last photo in your gallery.","Speak with an accent for the next 3 rounds.","Do 15 squats while singing.","Let the group write your next WhatsApp status.","Dance for 30 seconds with no music.","Call someone and sing them \"Happy Birthday\".","Give everyone here a compliment.","Talk for one minute without using the letter \"e\".","Let someone mess up your hair.","Tell a joke. If nobody laughs, take another dare.","Do your best news anchor impression."],
+ never:["Never have I ever slept more than 12 hours straight.","Never have I ever stalked an ex on social media.","Never have I ever sent a message to the wrong group chat.","Never have I ever lied about my age.","Never have I ever cried at a cartoon.","Never have I ever missed a flight or a train.","Never have I ever sung loudly in the shower.","Never have I ever pretended to like a gift.","Never have I ever forgotten a name right after hearing it.","Never have I ever eaten food off the floor.","Never have I ever talked to myself on the street.","Never have I ever forwarded a screenshot I shouldn't have."],
+ likely:["Who's most likely to be late to their own wedding?","Who's most likely to go viral on TikTok?","Who's most likely to survive a zombie apocalypse?","Who's most likely to blow their paycheck in one night?","Who's most likely to fall asleep first at the party?","Who's most likely to move abroad for love?","Who's most likely to win the lottery and lose it all?","Who's most likely to send a 5-minute voice message?","Who's most likely to get lost with GPS on?","Who's most likely to adopt five cats?","Who's most likely to laugh at a serious moment?","Who's most likely to become a millionaire?"],
+ sTruth:["Who here do you find the most attractive?","What was your weirdest kiss?","Have you ever had a crush on someone in this group?","What's the boldest thing you've done on a date?","Describe your ideal type in 3 words.","Have you ever drunk-texted an ex?"],
+ sDare:["Send a 🔥 to the last person you chatted with.","Let the group read your latest chat for 10 seconds.","Whisper a compliment to the person on your right.","Give your most seductive look for 10 seconds.","Slow dance with a pillow for 20 seconds.","Let someone pick your profile picture for 24 hours."],
+ words:["Beach","Pizza","Hospital","Airport","Nightclub","Gym","Cinema","Supermarket","Football","Wedding","Airplane","Mountain","School","Birthday","Swimming pool","Library","Restaurant","Zoo","Christmas","Concert"]}
+};
+const CODES=["RONDA26"]; // demo: real codes come from the payment provider
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const S={lang:store.get("ronda.lang",(navigator.language||"es").slice(0,2)),players:store.get("ronda.players",["Heri","Ana","Marco"]),spicy:store.get("ronda.spicy",false),view:"home",mode:null,decks:{},msg:"",custom:[],isAdmin:false,db:null,tv:store.get("ronda.tv",false),adm:{lang:"es",deck:"truth"},amsg:""};
+if(!T[S.lang])S.lang="es";
+const t=k=>T[S.lang][k];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function pool(key){
+  const d=D[S.lang],c=dk=>S.custom.filter(x=>x.lang===S.lang&&x.deck===dk).map(x=>x.text),m=(arr,sp)=>arr.map(txt=>({txt,spicy:sp}));
+  if(key==="truth"||key==="dare"){const sk=key==="truth"?"sTruth":"sDare";return m(d[key].concat(c(key)),false).concat(S.spicy?m(d[sk].concat(c(sk)),true):[])}
+  return m(d[key].concat(c(key)),false);
+}
+function draw(key){
+  const p=pool(key),id=S.lang+key+S.spicy;
+  if(!S.decks[id]||!S.decks[id].left.length)S.decks[id]={left:shuffle(p),n:0,total:p.length};
+  const dk=S.decks[id];dk.n++;const c=dk.left.pop();
+  return {txt:c.txt,spicy:c.spicy,n:dk.n,total:dk.total};
+}
+const app=document.getElementById("app");
+function render(){
+  document.documentElement.lang=S.lang;
+  const v=S.view;let h="";
+  if(v==="home"){
+    h=`<header><h1>RON<span>DA</span></h1><p class="tag">${t("tag")}</p></header>
+    <div class="langs" role="group" aria-label="${t("lang")}">${["es","de","it","en"].map(l=>`<button class="chip" data-lang="${l}" aria-pressed="${l===S.lang}">${l.toUpperCase()}</button>`).join("")}</div>
+    <div class="tools"><button class="chip" data-act="tv" aria-pressed="${S.tv}">${t("tv")}</button>${S.isAdmin?`<button class="chip" data-act="admin">${t("panel")}</button>`:""}</div>
+    <div class="label">${t("modes")}</div>
+    <div class="modes">
+      <button class="mode m-td" data-mode="td"><b>${t("td")}</b><small>${t("tdS")}</small></button>
+      <button class="mode m-nv" data-mode="nv"><b>${t("nv")}</b><small>${t("nvS")}</small></button>
+      <button class="mode m-lk" data-mode="lk"><b>${t("lk")}</b><small>${t("lkS")}</small></button>
+      <button class="mode m-im" data-mode="im" ${S.tv?"disabled":""}><b>${t("im")}</b><small>${S.tv?t("imTv"):t("imS")}</small></button>
+    </div>
+    <section class="box">
+      <div class="label">${t("players")} · ${S.players.length}</div>
+      <div class="players">${S.players.map((p,i)=>`<span class="pl">${esc(p)}<button data-del="${i}" aria-label="×">×</button></span>`).join("")}</div>
+      <form class="row" id="addf"><input type="text" id="pname" maxlength="16" placeholder="${t("ph")}" autocomplete="off"><button class="btn" type="submit">${t("add")}</button></form>
+    </section>
+    <section class="box">
+      <div class="lock"><div><b>${t("spicy")}</b><p>${t("spicyS")}</p></div><span class="pill ${S.spicy?"":"off"}">${S.spicy?t("unlocked"):t("locked")}</span></div>
+      ${S.spicy?"":`<form class="row" id="codef"><input type="text" id="code" placeholder="${t("code")}" autocomplete="off"><button class="btn gold" type="submit">${t("unlock")}</button></form><p class="note">${t("demo")}</p>`}
+      <p class="msg" aria-live="polite">${S.msg}</p>
+    </section>`;
+  }
+  else if(v==="game"){
+    const g=S.game,m=S.mode;
+    let top=`<div class="top"><button class="btn ghost" data-act="home">${t("back")}</button><span class="label">${t(m)}</span></div>`;
+    if(m==="td"){
+      const p=S.players[g.turn%S.players.length];
+      if(!g.card){h=top+`<p class="turn">${t("turn")} <b>${esc(p)}</b></p><div class="card c-hide" style="justify-content:center"><div class="txt" style="text-align:center">${esc(p)}</div></div><div class="choice"><button class="btn b-truth" data-pick="truth" data-primary>${t("truth")}</button><button class="btn b-dare" data-pick="dare">${t("dare")}</button></div>`}
+      else{const c=g.card;h=top+`<p class="turn">${t("turn")} <b>${esc(p)}</b></p><div class="card ${c.spicy?"c-spicy":"c-"+g.kind}"><div class="kind">${t(g.kind)}${c.spicy?" · 18+":""}</div><div class="txt">${esc(c.txt)}</div><div class="foot">${t("card")} ${c.n}/${c.total}</div></div><button class="btn big" data-act="tdnext" data-primary>${t("next")}</button>`}
+    }
+    else if(m==="nv"||m==="lk"){
+      const c=g.card,k=m==="nv"?"never":"likely";
+      h=top+`<div class="card c-${k}"><div class="kind">${t(m)}</div><div class="txt">${esc(c.txt)}</div><div class="foot">${t(m==="nv"?"nvHint":"lkHint")} · ${c.n}/${c.total}</div></div><button class="btn big" data-act="simple" data-primary>${t("next")}</button>`;
+    }
+    else if(m==="im"){
+      const n=S.players.length;
+      if(g.step<n){const p=S.players[g.step];
+        if(!g.show)h=top+`<p class="turn">${t("pass")} <b>${esc(p)}</b></p><button class="card c-hide" data-act="show" data-primary style="border:0;text-align:left;font:inherit"><div class="kind">${g.step+1}/${n}</div><div class="txt">${t("tap")}</div><div class="foot">${esc(p)}</div></button>`;
+        else{const imp=g.step===g.imp;h=top+`<p class="turn"><b>${esc(p)}</b></p><div class="card ${imp?"c-imp":"c-word"}"><div class="kind">${imp?t("youImp"):t("yourWord")}</div><div class="txt">${imp?"???":esc(g.word)}</div><div class="foot">${imp?t("impHint"):""}</div></div><button class="btn big" data-act="hide" data-primary>${t("hide")}</button>`}
+      } else if(!g.revealed){
+        h=top+`<div class="card c-likely"><div class="kind">${t("discuss")}</div><div class="txt">${t("starts")}: ${esc(S.players[g.first])}</div><div class="foot">${t("discussHint")}</div></div><button class="btn big gold" data-act="reveal" data-primary>${t("reveal")}</button>`;
+      } else {
+        h=top+`<div class="card c-imp"><div class="kind">${t("impWas")}</div><div class="txt">${esc(S.players[g.imp])}</div><div class="foot">${t("wordWas")}: ${esc(g.word)}</div></div><button class="btn big" data-act="imnew" data-primary>${t("again")}</button>`;
+      }
+    }
+  }
+  else if(v==="admin")h=renderAdmin();
+  document.body.classList.toggle("tv",S.tv);
+  app.innerHTML=h;
+  if(S.tv){const f=app.querySelector("[data-primary]")||app.querySelector(".mode:not(:disabled)");f&&f.focus()}
+}
+const DECKS=[["truth","Verdad"],["dare","Reto"],["never","Yo nunca"],["likely","¿Quién es más probable?"],["sTruth","Verdad 18+"],["sDare","Reto 18+"],["words","Palabras Impostor"]];
+function renderAdmin(){
+  const a=S.adm,base=D[a.lang][a.deck],mine=S.custom.filter(x=>x.lang===a.lang&&x.deck===a.deck).sort((x,y)=>(y.ts||0)-(x.ts||0));
+  const cnt=dk=>D[a.lang][dk].length+S.custom.filter(x=>x.lang===a.lang&&x.deck===dk).length;
+  return `<div class="top"><button class="btn ghost" data-act="home">${t("back")}</button><span class="label">Panel</span></div>
+  <h2>Panel de cartas</h2>
+  <div class="langs" role="group" aria-label="Idioma">${["es","de","it","en"].map(l=>`<button class="chip" data-alang="${l}" aria-pressed="${l===a.lang}">${l.toUpperCase()}</button>`).join("")}</div>
+  <div class="langs" role="group" aria-label="Tema">${DECKS.map(([k,n])=>`<button class="chip" data-adeck="${k}" aria-pressed="${k===a.deck}">${n}<span class="n">${cnt(k)}</span></button>`).join("")}</div>
+  <form class="box" id="cardf"><label class="label" for="newcards">Nuevas cartas · una por línea</label>
+    <textarea id="newcards" maxlength="4000" placeholder="${a.deck==="words"?"Ej.: Carnaval":"Ej.: ¿Cuál es tu mayor secreto?"}"></textarea>
+    <button class="btn gold big" type="submit">Añadir a ${DECKS.find(d=>d[0]===a.deck)[1]} (${a.lang.toUpperCase()})</button>
+    <p class="msg" aria-live="polite">${esc(S.amsg)}</p></form>
+  <section class="box"><div class="label">Tus cartas · ${mine.length}</div>
+    <div class="clist">${mine.length?mine.map(x=>`<div class="ci"><span>${esc(x.text)}</span><button data-cdel="${x.id}" aria-label="Borrar">Borrar</button></div>`).join(""):`<p class="note">Todavía no has añadido cartas en este tema. Escribe arriba, una por línea.</p>`}</div>
+    <details><summary>Incluidas de serie · ${base.length}</summary><div class="clist" style="margin-top:8px">${base.map(x=>`<div class="ci base"><span>${esc(x)}</span></div>`).join("")}</div></details>
+    <p class="note">Todas las cartas salen siempre en orden aleatorio y no se repiten hasta acabar el mazo.</p></section>`;
+}
+function startMode(m){
+  if(m!=="nv"&&m!=="lk"&&S.players.length<3){S.msg=t("min");render();return}
+  S.mode=m;S.msg="";S.view="game";
+  if(m==="td")S.game={turn:0,card:null};
+  if(m==="nv")S.game={card:draw("never")};
+  if(m==="lk")S.game={card:draw("likely")};
+  if(m==="im")newImp();
+  render();window.scrollTo(0,0);
+}
+function newImp(){const w=D[S.lang].words,n=S.players.length;S.game={step:0,show:false,imp:Math.random()*n|0,first:Math.random()*n|0,word:w[Math.random()*w.length|0],revealed:false}}
+app.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.lang){S.lang=b.dataset.lang;store.set("ronda.lang",S.lang);S.msg="";render();return}
+  if(b.dataset.mode){startMode(b.dataset.mode);return}
+  if(b.dataset.del){S.players.splice(+b.dataset.del,1);store.set("ronda.players",S.players);render();return}
+  if(b.dataset.pick){S.game.kind=b.dataset.pick;S.game.card=draw(b.dataset.pick);render();return}
+  if(b.dataset.alang){S.adm.lang=b.dataset.alang;S.amsg="";render();return}
+  if(b.dataset.adeck){S.adm.deck=b.dataset.adeck;S.amsg="";render();return}
+  if(b.dataset.cdel){S.db&&S.db.doc("cards/"+b.dataset.cdel).delete().catch(()=>{S.amsg="No se pudo borrar. Inténtalo de nuevo.";render()});return}
+  const a=b.dataset.act,g=S.game;
+  if(a==="tv"){S.tv=!S.tv;store.set("ronda.tv",S.tv);render();return}
+  if(a==="admin"){S.view="admin";S.adm.lang=S.lang;render();return}
+  if(a==="home"){S.view="home";render()}
+  if(a==="tdnext"){g.turn++;g.card=null;render()}
+  if(a==="simple"){g.card=draw(S.mode==="nv"?"never":"likely");render()}
+  if(a==="show"){g.show=true;render()}
+  if(a==="hide"){g.show=false;g.step++;render()}
+  if(a==="reveal"){g.revealed=true;render()}
+  if(a==="imnew"){newImp();render()}
+});
+app.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(e.target.id==="addf"){const i=document.getElementById("pname"),v=i.value.trim();if(v&&S.players.length<12){S.players.push(v);store.set("ronda.players",S.players);S.msg=""}render();document.getElementById("pname").focus()}
+  if(e.target.id==="cardf"){addCards();return}
+  if(e.target.id==="codef"){const v=document.getElementById("code").value.trim().toUpperCase();if(CODES.includes(v)){S.spicy=true;store.set("ronda.spicy",true);S.decks={};S.msg=t("ok")}else S.msg=t("bad");render()}
+});
+async function addCards(){
+  const ta=document.getElementById("newcards"),lines=ta.value.split("\n").map(x=>x.trim()).filter(Boolean).map(x=>x.slice(0,240));
+  if(!lines.length||!S.db)return;
+  const {lang,deck}=S.adm;let ok=0;
+  for(const text of lines){try{await S.db.collection("cards").add({lang,deck,text,ts:Date.now()});ok++}catch(e){S.amsg=e&&e.code==="quota_exceeded"?"Límite de cartas alcanzado.":"Algunas cartas no se guardaron. Inténtalo de nuevo.";break}}
+  if(ok)S.amsg=ok+(ok===1?" carta añadida":" cartas añadidas");
+  render();
+}
+document.addEventListener("keydown",e=>{
+  if(e.target.matches("input,textarea"))return;
+  const bs=[...app.querySelectorAll("button:not(:disabled)")],i=bs.indexOf(document.activeElement);
+  if(e.key==="ArrowRight"||e.key==="ArrowDown"){bs[(i+1)%bs.length]?.focus();e.preventDefault()}
+  else if(e.key==="ArrowLeft"||e.key==="ArrowUp"){bs[(i-1+bs.length)%bs.length]?.focus();e.preventDefault()}
+  else if((e.key==="Escape"||e.key==="Backspace"||e.key==="GoBack"||e.key==="BrowserBack")&&S.view!=="home"){S.view="home";render();e.preventDefault()}
+});
+render();
+(async()=>{
+  if(!window.claude||!claude.use)return;
+  try{
+    const [db,user]=await Promise.all([claude.use("db"),claude.use("user")]);
+    if(user){try{S.isAdmin=!!(await user.canEdit())}catch(e){}}
+    if(!db){if(S.view==="home")render();return}
+    S.db=db;
+    db.collection("cards").onSnapshot(snap=>{
+      S.custom=snap.docs.map(d=>Object.assign({id:d.id},d.data())).filter(x=>x.text&&D[x.lang]&&D[x.lang][x.deck]);
+      S.decks={};
+      if(S.view==="admin"){const ta=document.getElementById("newcards"),keep=ta?ta.value:"";render();const nt=document.getElementById("newcards");if(nt&&keep)nt.value=keep}
+      else if(S.view==="home")render();
+    },()=>{});
+    if(S.view==="home")render();
+  }catch(e){}
+})();
+</script>
+
+</body></html>
